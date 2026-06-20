@@ -3,7 +3,7 @@ import structlog
 from app.broker import broker
 from app.clients import SerperClient
 from app.config import get_settings
-from app.tasks.extract import parse_job
+from app.tasks.extract import extract_vacancy
 
 logger = structlog.get_logger()
 
@@ -22,7 +22,7 @@ async def scrape_job_page(query: str) -> dict[str, int]:
         urls_found = len(urls)
 
         for url in urls:
-            await parse_job.kiq(url)
+            await extract_vacancy.kiq(url)
             tasks_queued += 1
 
     except Exception as e:

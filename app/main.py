@@ -72,3 +72,6 @@ def create_app() -> FastAPI:
     application = FastAPI(title=settings.app_name, lifespan=lifespan)
     application.include_router(router)
     return application
+
+
+app = create_app()
