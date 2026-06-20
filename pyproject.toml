@@ -25,6 +25,7 @@ sentry-sdk = {extras = ["fastapi"], version = "^2.0.0"}
 slack-sdk = "^3.27.1"
 openai = "^1.16.2"
 google-generativeai = "^0.8.0"
+greenlet = "^3.5.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.1.1"

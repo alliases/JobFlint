@@ -4,7 +4,7 @@ import structlog
 from slack_sdk.errors import SlackApiError
 from slack_sdk.web.async_client import AsyncWebClient
 
-from app.models.work import Job
+from app.models.work import Work
 
 BlockKitBlock = dict[str, Any]
 
@@ -17,10 +17,10 @@ class SlackNotifier:
         self.client = AsyncWebClient(token=bot_token)
         self.channel_id = channel_id
 
-    async def send(self, job: Job) -> bool:
+    async def send(self, vacancy: Work) -> bool:
         """Send a Block Kit message to Slack. Returns True on success."""
-        blocks = self._format_block_kit(job)
-        fallback_text = f"New Job: {job.title} at {job.company}"
+        blocks = self._format_block_kit(vacancy)
+        fallback_text = f"New Vacancy: {vacancy.title} at {vacancy.company}"
 
         try:
             response = await self.client.chat_postMessage(  # type: ignore[no-untyped-call]
@@ -29,27 +29,27 @@ class SlackNotifier:
                 blocks=blocks,
                 unfurl_links=False,
             )
-            logger.debug("slack_message_sent", job_id=job.id, ts=response["ts"])
+            logger.debug("slack_message_sent", vacancy_id=vacancy.id, ts=response["ts"])
             return True
         except SlackApiError as e:
-            logger.error("slack_api_error", error=e.response["error"], job_id=job.id)
+            logger.error("slack_api_error", error=e.response["error"], vacancy_id=vacancy.id)
             return False
         except Exception as e:
-            logger.error("slack_unexpected_error", error=str(e), job_id=job.id)
+            logger.error("slack_unexpected_error", error=str(e), vacancy_id=vacancy.id)
             return False
 
-    def _format_block_kit(self, job: Job) -> list[BlockKitBlock]:
-        """Format a job into a Slack Block Kit block array."""
+    def _format_block_kit(self, vacancy: Work) -> list[BlockKitBlock]:
+        """Format a vacancy into a Slack Block Kit block array."""
         # Slack header block text limit is 150 chars.
-        title = job.title[:145] + "..." if len(job.title) > 150 else job.title
+        title = vacancy.title[:145] + "..." if len(vacancy.title) > 150 else vacancy.title
 
         salary_text = "N/A"
-        if job.salary_min and job.salary_max:
-            salary_text = f"{job.salary_min} - {job.salary_max} {job.salary_currency}"
-        elif job.salary_min:
-            salary_text = f"From {job.salary_min} {job.salary_currency}"
+        if vacancy.salary_min and vacancy.salary_max:
+            salary_text = f"{vacancy.salary_min} - {vacancy.salary_max} {vacancy.salary_currency}"
+        elif vacancy.salary_min:
+            salary_text = f"From {vacancy.salary_min} {vacancy.salary_currency}"
 
-        location = job.location or "Remote / N/A"
+        location = vacancy.location or "Remote / N/A"
 
         blocks: list[BlockKitBlock] = [
             {
@@ -64,13 +64,13 @@ class SlackNotifier:
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": f"*Company:* {job.company}\n*Location:* {location}\n*Salary:* {salary_text}",
+                    "text": f"*Company:* {vacancy.company}\n*Location:* {location}\n*Salary:* {salary_text}",
                 },
             },
         ]
 
-        if job.skills:
-            skills_text = ", ".join(job.skills)
+        if vacancy.skills:
+            skills_text = ", ".join(vacancy.skills)
             blocks.append(
                 {
                     "type": "section",
@@ -89,11 +89,11 @@ class SlackNotifier:
                         "type": "button",
                         "text": {
                             "type": "plain_text",
-                            "text": "View Job",
+                            "text": "View Vacancy",
                             "emoji": True,
                         },
-                        "url": job.source_url,
-                        "action_id": "view_job_action",
+                        "url": vacancy.source_url,
+                        "action_id": "view_vacancy_action",
                     }
                 ],
             }
