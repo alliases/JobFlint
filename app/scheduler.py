@@ -16,7 +16,7 @@ scheduler = TaskiqScheduler(
 SCHEDULED_TASKS: list[ScheduledTask] = [
     ScheduledTask(
         schedule_id="extract_vacancy_cron",
-        task_name="extract_vacancy",
+        task_name="scrape_job_page",
         labels={},
         args=[_settings.scrape_query],
         kwargs={},

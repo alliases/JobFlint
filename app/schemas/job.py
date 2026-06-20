@@ -17,7 +17,7 @@ class ParsedVacancy(BaseModel):
     description: Optional[str] = None
 
     @model_validator(mode="after")
-    def parse_salary_string(self) -> "ParsedJob":
+    def parse_salary_string(self) -> "ParsedVacancy":
         """Parse raw salary string into salary_min and salary_max."""
         if not self.salary:
             return self
