@@ -1,0 +1,43 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install Poetry
+        run: curl -sSL https://install.python-poetry.org | python3 -
+
+      - name: Install dependencies
+        run: poetry install --no-root
+
+      - name: Run Ruff Linter
+        run: poetry run ruff check .
+
+      - name: Run Ruff Formatter
+        run: poetry run ruff format --check .
+
+      - name: Run Pytest
+        env:
+          DATABASE_URL: "postgresql+asyncpg://user:pass@localhost:5432/testdb"
+          REDIS_URL: "redis://localhost:6379/0"
+          SERPER_API_KEY: "dummy_serper_key"
+          OPENAI_API_KEY: "dummy_openai_key"
+          GEMINI_API_KEY: "dummy_gemini_key"
+          SLACK_BOT_TOKEN: "dummy_slack_token"
+          SLACK_CHANNEL_ID: "dummy_channel_id"
+          SCRAPE_QUERY: "Python Developer"
+        run: poetry run pytest
