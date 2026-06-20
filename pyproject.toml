@@ -2,7 +2,7 @@
 name = "job-flint"
 version = "0.1.0"
 description = "Async Job Scraper with AI Parsing"
-authors = ["PyDevDeep"]
+authors = ["alliases"]
 readme = "README.md"
 package-mode = false
 
