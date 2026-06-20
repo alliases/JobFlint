@@ -68,6 +68,7 @@ async def trigger_scrape(request: ScrapeRequest) -> dict[str, str]:
 
 def create_app() -> FastAPI:
     """Factory function for creating a configured FastAPI application."""
+    settings = get_settings()
     application = FastAPI(title=settings.app_name, lifespan=lifespan)
     application.include_router(router)
     return application

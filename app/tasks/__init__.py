@@ -1,5 +1,5 @@
-from .notify import send_alert
-from .extract import parse_job
+from .extract import extract_vacancy
 from .fetch import scrape_job_page
+from .notify import send_alert
 
-__all__ = ["scrape_job_page", "parse_job", "send_alert"]
+__all__ = ["extract_vacancy", "scrape_job_page", "send_alert"]
