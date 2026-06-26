@@ -23,7 +23,7 @@ tenacity = "^8.2.3"
 structlog = "^24.1.0"
 sentry-sdk = {extras = ["fastapi"], version = "^2.0.0"}
 slack-sdk = "^3.27.1"
-openai = "^1.16.2"
+openai = ">=1.16.2,<3.0.0"
 google-generativeai = "^0.8.0"
 
 [tool.poetry.group.dev.dependencies]
